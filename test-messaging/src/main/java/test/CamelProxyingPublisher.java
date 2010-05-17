@@ -2,8 +2,9 @@ package test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -13,19 +14,26 @@ public class CamelProxyingPublisher extends AbstractSpringAwareEventPublisher
 		implements CamelContextAware {
 
 	private CamelContext camelContext;
+	private Map<Class<?>, ? extends EventListener<? extends Event>> listenerMap;
 
 	private EventRouter router;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		setListeners(proxyListeners());
+		listenerMap = proxyListeners();
+	}
+	
+	@Override
+	public <E extends Event> void publish(E event) {
+		EventListener<E> eventListener = (EventListener<E>) listenerMap.get(event.getClass());
+		eventListener.receive(event);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends Event> Collection<? extends EventListener<E>> proxyListeners()
+	public <E extends Event> Map<Class<?>, ? extends EventListener<E>> proxyListeners()
 			throws Exception {
-		Collection<EventListener<E>> list = new ArrayList<EventListener<E>>();
+		Map<Class<?>, EventListener<E>> lMap = new HashMap<Class<?>, EventListener<E>>();
 		for (EventListener<? extends Event> l : getListeners()) {
 			Class clazz = l.getClass();
 			Type[] types = clazz.getGenericInterfaces();
@@ -35,10 +43,16 @@ public class CamelProxyingPublisher extends AbstractSpringAwareEventPublisher
 				EventListener<E> proxy = (EventListener<E>) ProxyHelper
 						.createProxy(camelContext.getEndpoint(getRouter()
 								.createRoute(eventType)), EventListener.class);
-				list.add((EventListener<E>) proxy);
+				lMap.put(eventType, proxy);
 			}
 		}
-		return list;
+		return lMap;
+	}
+
+	@Override
+	Collection<? extends EventListener<? extends Event>> getListeners() {
+		// TODO Auto-generated method stub
+		return super.getListeners();
 	}
 
 	@Override
