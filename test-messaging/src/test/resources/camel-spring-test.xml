@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+		">
+		
+	<context:component-scan base-package="test.route"/>
+
+	<bean id="router" class="test.SedaEventRouter" />
+	<bean id="publisher" class="test.CamelProxyingPublisher">
+		<property name="router">
+			<ref bean="router" />
+		</property>
+	</bean>
+
+	<bean class="test.TestListener1" />
+	<bean class="test.TestListener2">
+		<constructor-arg index="0">
+			<value>2</value>
+		</constructor-arg>
+	</bean>
+	
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+		<packageScan>
+			<package>test.route</package>
+		</packageScan>
+	</camelContext>
+	
+</beans>
