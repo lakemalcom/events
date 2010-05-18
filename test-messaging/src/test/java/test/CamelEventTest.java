@@ -19,9 +19,12 @@ public class CamelEventTest {
 	}
 
 	@Test
-	public void testListening() {
+	public void testListening() throws InterruptedException {
 		publisher.publish(new TestEvent1());
+		Thread.sleep(1000);
 		publisher.publish(new TestEvent2());
+		Thread.sleep(1000);
 		publisher.publish(new TestEvent2());
+		Thread.sleep(1000);
 	}
 }

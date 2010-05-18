@@ -13,7 +13,7 @@ public class SpringAwareEventPublisher extends AbstractEventPublisher
 		implements InitializingBean, ApplicationContextAware {
 
 	private Collection<? extends EventListener<? extends Event>> listeners;
-	private ApplicationContext applicationContext;
+	protected ApplicationContext applicationContext;
 
 	@SuppressWarnings("unchecked")
 	@Override

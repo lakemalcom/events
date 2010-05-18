@@ -1,11 +1,6 @@
 package test;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,11 +17,15 @@ public class CamelProxyingPublisher extends SpringAwareEventPublisher implements
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        listenerRegistry = proxyListeners();
+        listenerRegistry = new HashMap<Class<?>, EventListener<Event>>();
+        listenerRegistry.put(Event.class, createProxy(Event.class));
     }
 
     @Override
     public <E extends Event> void publish(E event) {
+        if (!listenerRegistry.containsKey(event.getClass())) {
+            listenerRegistry.put(event.getClass(), createProxy(event.getClass()));
+        }
         for (Class<?> c : listenerRegistry.keySet()) {
             if (c.isAssignableFrom(event.getClass())) {
                 EventListener<Event> l = listenerRegistry.get(c);
@@ -35,29 +34,15 @@ public class CamelProxyingPublisher extends SpringAwareEventPublisher implements
         }
     }
 
-    public <E extends Event> Map<Class<?>, EventListener<E>> proxyListeners() throws Exception {
-        Map<Class<?>, EventListener<E>> lMap = new HashMap<Class<?>, EventListener<E>>();
-        for (EventListener<? extends Event> l : getListeners()) {
-            Class<?> clazz = l.getClass();
-            List<Type> types = new ArrayList<Type>(Arrays.asList(clazz.getGenericInterfaces()));
-            if (l instanceof AbstractRouteListener<?>) {
-                types.add(clazz.getGenericSuperclass());
-            }
-
-            for (Type t : types) {
-                Class<?> eventType = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
-                if (!lMap.containsKey(eventType)) {
-                    lMap.put(eventType, (EventListener<E>) createProxy(eventType));
-                }
-            }
-        }
-        return lMap;
-    }
-
     @SuppressWarnings("unchecked")
-    private <E extends Event> EventListener<E> createProxy(Class<?> eventType) throws Exception {
-        EventListener<E> proxy = (EventListener<E>) ProxyHelper.createProxy(camelContext.getEndpoint(getRouter()
-                .createRoute(eventType)), EventListener.class);
+    private <E extends Event> EventListener<E> createProxy(Class<?> eventType) {
+        EventListener<E> proxy = null;
+        try {
+            proxy = (EventListener<E>) ProxyHelper.createProxy(camelContext.getEndpoint(getRouter().createRoute(
+                    eventType)), EventListener.class);
+        } catch (Exception e) {
+            e.printStackTrace();// XXX log exception
+        }
         return proxy;
     }
 

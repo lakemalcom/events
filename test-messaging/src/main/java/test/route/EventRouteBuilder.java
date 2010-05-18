@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import test.AbstractRouteListener;
 import test.EventListener;
 import test.EventRouteStrategy;
 
@@ -33,9 +32,6 @@ public class EventRouteBuilder extends RouteBuilder implements ApplicationContex
         for (EventListener<?> l : values) {
             Class<?> clazz = l.getClass();
             List<Type> types = new ArrayList<Type>(Arrays.asList(clazz.getGenericInterfaces()));
-            if (l instanceof AbstractRouteListener) {
-                types.add(clazz.getGenericSuperclass());
-            }
             for (Type t : types) {
                     Class<?> eventType = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
                     from(router.createRoute(eventType)).bean(l);

@@ -9,7 +9,7 @@
 
 	<context:component-scan base-package="test.route" />
 
-	<bean id="router" class="test.SedaEventRouter" />
+	<bean id="router" class="test.JmsEventRouter" />
 	<bean id="publisher" class="test.CamelProxyingPublisher">
 		<property name="router">
 			<ref bean="router" />
@@ -17,8 +17,6 @@
 	</bean>
 
 
-	<bean class="test.TestRouteListener" />
-	<bean class="test.SpecificRouteListener" />
 	<bean class="test.TestListener1" />
 	<bean class="test.TestListener1Again" />
 	<bean class="test.BaseListener" />
