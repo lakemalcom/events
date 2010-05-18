@@ -20,8 +20,12 @@
    <!-- Limit categories -->
    <!-- ================ -->
 
+   <category name="org.apache.camel">
+      <priority value="INFO"/>
+   </category>
+   
    <category name="org">
-      <priority value="DEBUG"/>
+      <priority value="INFO"/>
    </category>
    
    <category name="com">

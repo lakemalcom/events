@@ -18,38 +18,33 @@ import test.AbstractRouteListener;
 import test.EventListener;
 import test.EventRouteStrategy;
 
-public class EventRouteBuilder extends RouteBuilder implements
-		ApplicationContextAware {
+public class EventRouteBuilder extends RouteBuilder implements ApplicationContextAware {
 
-	private ApplicationContext applicationContext;
-	
-	@Autowired
-	private EventRouteStrategy router;
+    private ApplicationContext applicationContext;
 
-	@SuppressWarnings("unchecked")
+    @Autowired
+    private EventRouteStrategy router;
+
+    @SuppressWarnings("unchecked")
     @Override
-	public void configure() throws Exception {
-		Collection<EventListener<?>> values = BeanFactoryUtils
-				.beansOfTypeIncludingAncestors(applicationContext,
-						EventListener.class).values();
-		for (EventListener<?> l : values) {
+    public void configure() throws Exception {
+        Collection<EventListener<?>> values = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+                EventListener.class).values();
+        for (EventListener<?> l : values) {
             Class<?> clazz = l.getClass();
             List<Type> types = new ArrayList<Type>(Arrays.asList(clazz.getGenericInterfaces()));
-            if (l instanceof AbstractRouteListener<?>) {
+            if (l instanceof AbstractRouteListener) {
                 types.add(clazz.getGenericSuperclass());
             }
-			for (Type t : types) {
-				Class<?> eventType = (Class<?>) ((ParameterizedType) t)
-						.getActualTypeArguments()[0];
-				from(router.createRoute(eventType)).inOnly().bean(
-						l);
-			}
-		}
-	}
+            for (Type t : types) {
+                    Class<?> eventType = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
+                    from(router.createRoute(eventType)).bean(l);
+            }
+        }
+    }
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

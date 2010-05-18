@@ -21,7 +21,7 @@ public class CamelEventTest {
 	@Test
 	public void testListening() {
 		publisher.publish(new TestEvent1());
-//		publisher.publish(new TestEvent2());
-//		publisher.publish(new TestEvent2());
+		publisher.publish(new TestEvent2());
+		publisher.publish(new TestEvent2());
 	}
 }

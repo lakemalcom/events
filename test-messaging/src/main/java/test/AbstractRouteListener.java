@@ -1,13 +1,13 @@
 package test;
+import java.lang.reflect.ParameterizedType;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.InOut;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import test.Event;
-import test.EventListener;
 
 
 public abstract class AbstractRouteListener<E extends Event> implements EventListener<E>, CamelContextAware {
@@ -18,8 +18,10 @@ public abstract class AbstractRouteListener<E extends Event> implements EventLis
     private EventRouteStrategy router;
 
     @Override
+    @InOut
     public void receive(E event) {
-        Endpoint endpoint = camelContext.getEndpoint(router.createBuilderRoute(event.getClass()));
+        Class<?> c = (Class<?>) ((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Endpoint endpoint = camelContext.getEndpoint(router.createBuilderRoute(c));
         ProducerTemplate p = new DefaultProducerTemplate(camelContext, endpoint);
         p.sendBody(event);
     }
