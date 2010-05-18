@@ -9,7 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class AbstractSpringAwareEventPublisher extends AbstractEventPublisher
+public class SpringAwareEventPublisher extends AbstractEventPublisher
 		implements InitializingBean, ApplicationContextAware {
 
 	private Collection<? extends EventListener<? extends Event>> listeners;

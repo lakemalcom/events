@@ -17,7 +17,7 @@ public final class TestListener2 implements EventListener<TestEvent2> {
 	@Override
 	public void receive(TestEvent2 event) {
 		assertNotNull(event);
-		System.out.println("Received event " + event.getClass());
+		System.out.println(this.getClass()+ " received event " + event.getClass());
 		assertTrue(expectedEvents >= ++counter);
 	}
 }

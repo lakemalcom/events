@@ -44,15 +44,17 @@ public class EventTest {
 		publisher.publish(new TestEvent1());
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void testTwoSeparateListeners() {
-		listeners = Arrays.asList(new TestListener1(), new TestListener2(1));
+		listeners = Arrays.asList(new TestListener1(), new TestListener2(1), new TestListener1Again());
 		
 		publisher.publish(new TestEvent1());
 		publisher.publish(new TestEvent2());
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void testMultipleEvents() {
 		listeners = Arrays.asList(new TestListener1(), new TestListener2(2));
 		
