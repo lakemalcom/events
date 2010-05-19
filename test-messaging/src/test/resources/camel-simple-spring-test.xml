@@ -10,7 +10,7 @@
 
 
 	<bean id="router" class="test.JmsEventRouter" />
-	<bean id="publisher" class="test.CamelProxyingPublisher">
+	<bean id="publisher" class="test.SimpleCamelPublisher">
 		<property name="router">
 			<ref bean="router" />
 		</property>

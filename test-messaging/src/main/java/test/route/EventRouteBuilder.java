@@ -33,8 +33,8 @@ public class EventRouteBuilder extends RouteBuilder implements ApplicationContex
             Class<?> clazz = l.getClass();
             List<Type> types = new ArrayList<Type>(Arrays.asList(clazz.getGenericInterfaces()));
             for (Type t : types) {
-                    Class<?> eventType = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
-                    from(router.createRoute(eventType)).bean(l);
+                Class<?> eventType = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
+                from(router.createRoute(eventType)).bean(l);
             }
         }
     }

@@ -2,7 +2,7 @@ package test;
 
 public class JmsEventRouter implements EventRouteStrategy {
 	private static final String COMPONENT = "activemq:";
-    private static final String EXCHANGE = "?exchangePattern=InOnly";
+    private static final String EXCHANGE = "";
 
 	@Override
 	public String createRoute(Class<?> eventType) {
