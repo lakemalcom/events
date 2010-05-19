@@ -8,7 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import test.EventTest.TestEvent1;
 import test.EventTest.TestEvent2;
 
-public class SimplerCamelEventTest {
+public class SimpleCamelEventTest {
     
     private EventPublisher publisher;
 
